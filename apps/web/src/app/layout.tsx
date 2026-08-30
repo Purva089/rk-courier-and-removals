@@ -5,7 +5,14 @@ import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { Toaster } from '@/components/ui/toaster';
 
-const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-inter',
+  display: 'swap',
+  preload: true,
+  adjustFontFallback: true,
+  fallback: ['system-ui', 'Arial', 'sans-serif'],
+});
 
 export const metadata: Metadata = {
   title: 'RK Courier and Removals',

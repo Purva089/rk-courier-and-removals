@@ -4,7 +4,8 @@ import { SectionHeading } from '@/components/shared/SectionHeading';
 import { ServiceCard } from '@/components/shared/ServiceCard';
 import { StatsCounter } from '@/components/shared/StatsCounter';
 import { Button } from '@/components/ui/button';
-import { Plane, Truck, PackageCheck, Ship, FileText, ArrowRight, CheckCircle2, Home as HomeIcon } from 'lucide-react';
+import { Truck, PackageCheck, ArrowRight, Home as HomeIcon, CheckCircle2 } from 'lucide-react';
+import { PlaneIcon, ShipIcon, FileTextIcon } from '@/lib/icons';
 import Link from 'next/link';
 
 export default function Home() {

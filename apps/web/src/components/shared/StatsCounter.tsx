@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useRef, useId, useState } from 'react';
 import { AnimatedSection } from './AnimatedSection';
 
 interface StatsCounterProps {
@@ -11,10 +11,14 @@ interface StatsCounterProps {
 }
 
 export const StatsCounter = ({ end, label, suffix = '', duration = 2000 }: StatsCounterProps) => {
-  const [count, setCount] = useState(0);
   const [hasAnimated, setHasAnimated] = useState(false);
-  const elementRef = useRef(null);
+  const elementRef = useRef<HTMLDivElement>(null);
+  const id = useId();
+  const animationName = `count-up-${id}`;
+  const propertyName = `--count-${id}`;
+  const styleElRef = useRef<HTMLStyleElement | null>(null);
 
+  // IntersectionObserver to trigger animation
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -33,38 +37,47 @@ export const StatsCounter = ({ end, label, suffix = '', duration = 2000 }: Stats
     return () => observer.disconnect();
   }, []);
 
+  // Inject CSS: @property + @keyframes + pseudo-element content
   useEffect(() => {
     if (!hasAnimated) return;
-    
-    let startTime: number;
-    let animationFrame: number;
 
-    const animate = (timestamp: number) => {
-      if (!startTime) startTime = timestamp;
-      const progress = timestamp - startTime;
-      const percentage = Math.min(progress / duration, 1);
-      
-      const easeProgress = percentage === 1 ? 1 : 1 - Math.pow(2, -10 * percentage);
-      
-      setCount(Math.floor(end * easeProgress));
-
-      if (progress < duration) {
-        animationFrame = requestAnimationFrame(animate);
+    const css = `
+      @property ${propertyName} {
+        syntax: '<integer>';
+        initial-value: 0;
+        inherits: false;
       }
+      @keyframes ${animationName} {
+        from { ${propertyName}: 0; }
+        to { ${propertyName}: ${end}; }
+      }
+      .${animationName}-trigger {
+        animation: ${animationName} ${duration}ms ease-out forwards;
+      }
+      .${animationName}-trigger::after {
+        content: ${propertyName} '${suffix}';
+      }
+    `;
+
+    const styleEl = document.createElement('style');
+    styleEl.textContent = css;
+    document.head.appendChild(styleEl);
+    styleElRef.current = styleEl;
+
+    return () => {
+      styleEl.remove();
     };
-
-    animationFrame = requestAnimationFrame(animate);
-
-    return () => cancelAnimationFrame(animationFrame);
-  }, [end, duration, hasAnimated]);
+  }, [animationName, propertyName, end, duration, suffix, hasAnimated]);
 
   return (
     <div ref={elementRef}>
-      <AnimatedSection 
-        className="flex flex-col items-center justify-center p-6 text-center"
-      >
-        <div className="text-4xl md:text-5xl font-bold text-secondary mb-2">
-          {count.toLocaleString()}{suffix}
+      <AnimatedSection className="flex flex-col items-center justify-center p-6 text-center">
+        <div
+          className={`${hasAnimated ? `${animationName}-trigger` : ''} text-4xl md:text-5xl font-bold text-secondary mb-2`}
+          aria-live="polite"
+          style={{ '--count': hasAnimated ? `var(${propertyName})` : 0 }}
+        >
+          {hasAnimated ? '' : `0${suffix}`}
         </div>
         <div className="text-sm md:text-base font-medium text-primary/80 uppercase tracking-wider">
           {label}
