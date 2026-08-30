@@ -6,8 +6,7 @@
     "dev": "pnpm -r --parallel run dev",
     "build": "pnpm -r run build",
     "test": "pnpm -r run test",
-    "lint": "pnpm -r run lint",
-    "vercel-build": "pnpm install && pnpm run build"
+    "lint": "pnpm -r run lint"
   },
   "devDependencies": {
     "prettier": "^3.2.5",
