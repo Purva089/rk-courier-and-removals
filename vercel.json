@@ -1,0 +1,13 @@
+{
+  "buildCommand": "pnpm install --frozen-lockfile && pnpm run build",
+  "devCommand": "pnpm -r --parallel run dev",
+  "installCommand": "pnpm install --frozen-lockfile",
+  "framework": "nextjs",
+  "outputDirectory": "apps/web/.next",
+  "rootDirectory": ".",
+  "functions": {
+    "apps/web/src/app/**/*.tsx": {
+      "maxDuration": 30
+    }
+  }
+}
