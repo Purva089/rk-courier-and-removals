@@ -7,7 +7,7 @@
     "build": "pnpm -r run build",
     "test": "pnpm -r run test",
     "lint": "pnpm -r run lint",
-    "vercel-build": "pnpm install --frozen-lockfile && pnpm run build"
+    "vercel-build": "pnpm install && pnpm run build"
   },
   "devDependencies": {
     "prettier": "^3.2.5",
